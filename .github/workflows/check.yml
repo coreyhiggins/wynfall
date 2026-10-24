@@ -4,25 +4,29 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  check:
+  guard:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Refuse to publish a leak
+        run: node scripts/guard.mjs CHANGELOG.md README.md CONTRIBUTING.md
+
       - name: Changelog is well formed
         run: |
           set -euo pipefail
-          if [ ! -s CHANGELOG.md ]; then
-            echo "CHANGELOG.md is missing or empty"
-            exit 1
-          fi
+          test -s CHANGELOG.md || { echo "CHANGELOG.md is missing or empty"; exit 1; }
 
-          # Every version heading must look like "## 1.2.3".
           bad=$(grep -n '^## ' CHANGELOG.md | grep -vE '^[0-9]+:## [0-9]+\.[0-9]+\.[0-9]+$' || true)
           if [ -n "$bad" ]; then
             echo "Version headings must be '## MAJOR.MINOR.PATCH':"
@@ -30,42 +34,19 @@ jobs:
             exit 1
           fi
 
-          # Newest version must come first.
           versions=$(grep -oE '^## [0-9]+\.[0-9]+\.[0-9]+$' CHANGELOG.md | sed 's/## //')
           sorted=$(printf '%s\n' "$versions" | sort -Vr)
           if [ "$versions" != "$sorted" ]; then
             echo "Versions are not in descending order."
-            echo "found:  $versions"
-            echo "wanted: $sorted"
             exit 1
           fi
+          echo "OK: $(printf '%s\n' "$versions" | wc -l) versions, newest first"
 
-          count=$(printf '%s\n' "$versions" | wc -l)
-          echo "OK: $count versions, newest first"
-
-      - name: No secrets or private detail
+      - name: Internal links resolve
         run: |
           set -euo pipefail
-          # Fail loudly rather than publishing an internal name or a key.
-          patterns='YOUR_PRIVATE_PATTERN_1|YOUR_PRIVATE_PATTERN_2'
-          if grep -rniE "$patterns" --include='*.md' . ; then
-            echo "Found a string that must not be published."
-            exit 1
-          fi
-          if grep -rnE 'sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}' --include='*.md' . ; then
-            echo "Found something that looks like a token."
-            exit 1
-          fi
-          echo "OK: nothing sensitive found"
-
-      - name: Links resolve
-        run: |
-          set -euo pipefail
-          # Check internal links only. External hosts rate limit CI runners.
-          for f in $(grep -oE '\]\([^)#]+\.md\)' README.md CHANGELOG.md CONTRIBUTING.md | sed -E 's/.*\]\(([^)]+)\)/\1/' | sort -u); do
-            if [ ! -f "$f" ]; then
-              echo "Broken internal link: $f"
-              exit 1
-            fi
+          for f in $(grep -ohE '\]\([^)#]+\.md\)' README.md CHANGELOG.md CONTRIBUTING.md \
+                     | sed -E 's/.*\]\(([^)]+)\)/\1/' | sort -u); do
+            test -f "$f" || { echo "Broken internal link: $f"; exit 1; }
           done
           echo "OK: internal links resolve"

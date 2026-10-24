@@ -12,17 +12,7 @@ Wynfall is private AI for writing, decisions and code. Sigel is our own model, a
 
 This repository is the public half of that work. It holds what we release and when, in plain language.
 
-## What is here
 
-- **[CHANGELOG.md](CHANGELOG.md)** - every release, newest first, written for the person using the app
-- **[Discussions](https://github.com/coreyhiggins/wynfall/discussions)** - questions, answers, and what people want next
-- **[Issues](https://github.com/coreyhiggins/wynfall/issues)** - bugs and corrections, including mistakes in these notes
-
-## What is not here
-
-No source code. No installers or binaries. No training data, model weights, infrastructure configuration, or internal methods.
-
-That is deliberate rather than temporary. The pipeline behind the models is the product, and it stays private. Wynfall Desktop installs and updates through its own channel, so nothing here needs to ship a file.
 
 ## Corrections are welcome
 

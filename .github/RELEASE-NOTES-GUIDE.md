@@ -1,48 +1,58 @@
-A release note has one job: tell someone who already uses the app what changed for them.
+# How a release note gets written
 
-## Write it for the person using it
+Release notes are written by a person from the private log, not generated from it. The private log is a work record: it names files, issue numbers, internal flags, vendors, and hardware. Public notes describe the outcome and stop there.
 
-Lead with the outcome, not the implementation.
+## The one rule
 
-- Good: "A long run is no longer cut off after three minutes."
-- Weak: "Refactored the run timeout constant to read from config."
+**Say what the user can now do. Do not say how it was built, or where the idea came from.**
 
-If a release has one theme, put it in a bold line above the bullets. If it does not, skip the line. Most releases do not have one.
+If a sentence would help a competitor, it does not belong. If it only helps the person holding the app, it does.
 
-## Keep out
+## Three levels of detail
 
-These must never appear in a public note:
+| Level | Example | Publish? |
+|---|---|---|
+| Outcome | A long task is no longer cut off partway through. | Yes |
+| Limit | A turn can now run far longer before it has to stop, and you can extend it. | Yes, if the exact number is visible in the app |
+| Mechanism | Compaction runs between rounds so the context window does not overflow. | No |
 
-- Vendor names, model vendors, or checkpoint names
-- Internal host names, machine names, or IP addresses
-- Repository paths from private code, issue numbers, or PR numbers
-- Anything about training data, weights, or how the pipeline works
-- Pricing that has not been published
-- Customer names
+Mechanism is what leaks. The reader asked for the first row. Give them the first row.
 
-Repo issue and PR numbers normalize to `(#123)` in the private changelog. Strip them here.
+## Never publish
 
-## Format
+These are enforced by `scripts/guard.mjs`. Do not work around it by rewording just enough to pass.
 
-```markdown
-## 1.2.3
+- Issue and pull request numbers. They point at private project history.
+- Internal feature flags and shortcuts, such as a switch that only staff see.
+- The names of any model other than Sigel. Unreleased names are roadmap.
+- Vendors, providers, or checkpoints. Capability, not provenance.
+- The allowlist or denylist for environment variables. That is a map of the defense.
+- Hosting shape: how many machines, what runs on them, how they are reached.
+- Eval scores and internal benchmark numbers. If a number is not on the pricing page or the site, it is not ours to publish.
+- Absolute paths, source file names, and repository names.
+- Anything that reads as a security posture: what is blocked, what is trusted, what is logged.
 
-**One bold line, only if the release has a theme.**
+## Say it plainly or cut it
 
-- What changed, in the tense of what it does now.
-- Another change. One idea per bullet.
+- Lead with the outcome in the first four words.
+- Past tense for what changed, present tense for what it now does.
+- No "we are excited". No "seamless". No "robust". No "leverage".
+- One idea per bullet. If a bullet needs a semicolon chain, it is two bullets or none.
+- A short honest note beats a complete one that leaks.
+
+## Check before pushing
+
+```bash
+node scripts/guard.mjs CHANGELOG.md
 ```
 
-Order versions newest first. The workflow in this repository fails the build if they are not.
+Exit 1 means something in the block list is present. Fix the line by removing the detail, not by rewording it to slip past. Exit 0 with warnings means a person should look at each one.
 
-## Translate the internal changelog
+## Where the numbers come from
 
-The private changelog is written for engineers. Do not paste it. For each line, answer: what does the person notice?
+Only two places, ever:
 
-| Private line | Public line |
-|---|---|
-| `Compaction between rounds` | Context is compacted between rounds instead of ending the turn. |
-| `REA for founder, admin and security accounts (#464)` | Internal access control. Omit entirely. |
-| `Steering works during ChatGPT plan and Muse replies (#460)` | You can steer a reply while it is still being written. |
+1. The app itself, where a user can see it.
+2. `wynfall.dev`, which includes the pricing page.
 
-When in doubt, leave it out. A short honest note beats a complete one that leaks.
+If the number is not in one of those, it stays internal even when it is flattering.

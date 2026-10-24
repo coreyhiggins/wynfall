@@ -1,62 +1,58 @@
 # Changelog
 
-Every release of Wynfall Desktop, newest first. Written for the person using the app, not for the person who built it.
-
-Versions are dates in the sense that matters: what changed, and what it means when you open it.
+Every release of Wynfall Desktop, newest first. Written for the person using the app.
 
 ## 0.98.0
 
-**Long tasks stop getting cut off.**
+**Long tasks finish instead of stopping halfway.**
 
-- Streaming thinking now folds when a step ends. A running command shows a ticking clock and the tail of its output, the status line names the step it is on, and the stream keeps a heartbeat so you can tell it is still working.
-- A turn can now run 500 tool steps, or 1000 at Max effort. Context is compacted between rounds instead of ending the turn, a shell command can run up to 30 minutes, and a stretch of silence ends in a Continue button rather than a failure. Continue appears on every pause.
-- The Changes panel opens on its own at most once per chat, and never outside a git repository. The run stats box closes on a second click, Escape, or a click outside it.
+- When the model is working, you can see it working: what step it is on, and that it is still alive rather than hung.
+- Long tasks now have much more room before they have to pause, and a pause is a button you press to continue rather than a failure. This matters most on big refactors and long documents.
+- The Changes panel no longer opens over your work uninvited. It shows up once at most, and not at all in folders that are not a git repository.
 
 ## 0.97.0
 
-**The default model is the right one.**
-
-- Sigel is the default for every plan and every role. A model with no serving host is never picked automatically.
-- Connector results keep their structured data and their errors. Picking a tool shows its full schema, and paged tool lists load completely.
+- Sigel is the default, everywhere, on every plan. A model that cannot actually serve a request is never chosen for you.
+- Connectors are sturdier. Tool results keep their structure and their errors instead of flattening into text, and a long list of tools now loads completely.
 
 ## 0.96.0
 
 - You can steer a reply while it is still being written.
-- Each connected plan's models carry their own mark in the picker, so you can tell at a glance where a model came from.
+- Each connected plan is marked in the model picker, so you can see where a model came from at a glance.
 
 ## 0.95.0
 
-- User badges appear beside names.
+- Names in a chat can carry a badge.
 
 ## 0.94.0
 
-- The session rail: a right-hand column of compact cards for Environment, Context, Connectors, Outputs, Changes and Background tasks. Each card summarises something the app already had and opens that view. The Session button in the chat header toggles it, and the choice is remembered. It is on by default at 1280 pixels wide and up.
-- The Context ring and the rail now share one usage calculation, so the two numbers cannot disagree.
-- Line counts from git show on the Changes card.
-- The line under the title on the startup screen is centered. It was about 33 pixels off.
+- The session rail: a column of compact cards down the right side, one for each part of a running session. Each card summarises something the app already had and opens that view when clicked. Toggle it from the header, and the choice is remembered.
+- The context indicator and the rail now read from the same calculation, so they cannot disagree.
+- Line counts from git appear on the Changes card.
+- The line under the title on the startup screen is centered. It was off by a noticeable margin.
 
 ## 0.93.0
 
-- Models from a connected plan fill in the picker by themselves, in the background, so they appear without opening Settings. A look that finds nothing stops the lookup and waits longer before trying again.
-- A provider connected with a key lists its models newest first, by the provider's own dates, before the 16 model cap. A long list now drops the oldest instead of dropping at random.
-- New setting: show recent models in the picker. Off by default. Picks are recorded either way, so turning it on shows what you have used, and Favorites stay on top.
+- Models from a connected plan appear in the picker on their own, without opening Settings first.
+- A provider connected with a key lists its newest models first, by the provider's own dates, so a long list no longer drops the recent ones at random.
+- New setting: show recent models in the picker. Off by default. Turning it on puts what you have used near the top, with Favorites still above that.
 
 ## 0.92.0
 
-- Multi-agent runs get more room: the lead and workers get 24 tool rounds before they must hand off, and scouts and reviewers get 12, up from 8 for everyone. The out-of-rounds note reports that agent's own limit rather than a shared one.
-- When a model writes its next tool call as plain text instead of making the call, the step names the call it did not run and ends as partial. The raw markup is never shown.
+- Delegated work gets more room to finish before it has to report back, and the report now names which part ran out rather than blaming the whole task.
+- When a model describes an action instead of taking it, the step says so plainly and the run is marked partial. Raw markup is never shown to you.
 
 ## 0.91.0
 
 **Runs stay running, and report honestly.**
 
-- A long run is no longer cut off after three minutes. An empty reply is asked for once more. A run that ends with open tasks is shown as partial, with those tasks listed, and is never shown as done.
-- A run has a 60 minute clock and a spend budget. A parked run resumes where it stopped.
-- Every worker that changed files gets a reviewer.
-- A busy service or a dropped connection is retried with backoff. A prompt that is too long is compacted once and asked again.
-- When a drawing is written, it is rendered in an invisible window with no network, measured, and the result handed back to the model, so a finished picture is checked before it is called finished. A model that cannot see gets a description or measured facts instead.
-- The model list decides whether a picture can be sent. A refusal marks only that model, and a rejected draft is kept rather than lost.
+- A long run is no longer cut off partway through. A run that ends with work still open is shown as partial, with that work listed, and is never shown as finished.
+- A parked run picks up where it stopped rather than starting over.
+- Anything that changed files gets reviewed before you see it as done.
+- A busy service or a dropped connection is retried. A prompt that is too long is shortened once and asked again, instead of failing.
+- A finished picture is checked before it is called finished.
+- A rejected draft is kept rather than lost.
 
 ---
 
-Notes for earlier versions are in the hands of the people who ran them. This file starts when the repository did.
+Notes for earlier versions stay internal. This file starts with the first release worth telling you about.
