@@ -1,8 +1,6 @@
 <div align="center">
 
-# Wynfall
-
-**Release notes, status, and the public record of what ships.**
+<img src="https://raw.githubusercontent.com/coreyhiggins/wynfall/main/header.svg" alt="Wynfall: release notes, and the public record of what ships" width="100%">
 
 [wynfall.dev](https://wynfall.dev) &nbsp;·&nbsp; [Changelog](CHANGELOG.md) &nbsp;·&nbsp; [chat.wynfall.dev](https://chat.wynfall.dev)
 
